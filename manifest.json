@@ -4,7 +4,7 @@
     "description": "Notify if your favorite streamers are on!",
     "manifest_version": 2,
     "author": "AndresSp",
-    "permissions": ["alarms", "notifications", "storage"],
+    "permissions": ["alarms", "notifications", "storage","history"],
     "background": {
       "scripts": ["background.js"],
       "persistent": false
