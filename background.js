@@ -4,12 +4,14 @@ chrome.alarms.create('checkStreamsStatus', { delayInMinutes: 1, periodInMinutes:
 
 chrome.runtime.onInstalled.addListener(async function(){
     const data = await requestStreams([144360146, 171295429, 44445592])
-    const streamData = checkStreamFromResponse(data, 144360146) //flaiveth
-    if(streamData){
-        chrome.browserAction.setBadgeText({text: 'ON'});
-        showToast();
-    } else {
-        chrome.browserAction.setBadgeText({text: ''});
+    if(data){
+        const streamData = checkStreamFromResponse(data, 144360146) //flaiveth
+        if(streamData){
+            chrome.browserAction.setBadgeText({text: 'ON'});
+            showToast();
+        } else {
+            chrome.browserAction.setBadgeText({text: ''});
+        }
     }
 })
 
@@ -18,44 +20,61 @@ let counter = 1
 chrome.alarms.onAlarm.addListener(async function() {
     console.log('alarm', counter++)
     const data = await requestStreams([144360146, 171295429, 44445592])
-    const streamOn = checkStreamFromResponse(data, 144360146) //flaiveth
-    if(streamOn){
-        chrome.browserAction.setBadgeText({text: 'ON'});
-        showToast();
-    } else {
-        chrome.browserAction.setBadgeText({text: ''});
+    if(data){
+        const streamData = checkStreamFromResponse(data, 144360146) //flaiveth
+        if(streamData){
+            chrome.browserAction.setBadgeText({text: 'ON'});
+            showToast();
+        } else {
+            chrome.browserAction.setBadgeText({text: ''});
+        }
     }
   }
   );
 
 chrome.history.onVisited.addListener(function(historyResult) {
     if(historyResult){
-        if(historyResult.contains('twitch.tv') && historyResult.contains('flaiveth')){
+        console.log(historyResult)
+        if(historyResult.url.includes('twitch.tv') && historyResult.url.includes('flaiveth')){
             console.log('flai',historyResult) 
         }     
     }
-console.log(historyResult)
 })
 
 async function twitchAPIRequest(userIds) {
     const url = new URL('https://api.twitch.tv/helix/streams');
-    userIds.map((userId) => url.searchParams.append('user_id', userId))
-    const response = await fetch(url, {
+    try {
+        userIds.map((userId) => url.searchParams.append('user_id', userId))
+        const response = await fetch(url, {
        headers: {
         'Content-Type': 'application/json',
         'Client-ID': '17v1noul6hr06tipzfaggsspuevmxt'
-      }
-   })
-   return await response.json()
+        }
+    })
+        return await response.json()
+    } catch (error) {
+        if(error.message){
+            switch (error.message) {
+                case 'Failed to fetch':
+                    console.log('Internet Disconnected')
+                    break;
+                default: throw(`An unexpected error(twitchAPIRequest):${error}`)
+            }
+        } else {
+            throw(`An unexpected error(twitchAPIRequest):${error}`)
+        }
+    }
 }
 
 async function requestStreams(userIds) {
     try {
         const response = await twitchAPIRequest(userIds)
-        const data = await response.data
-        return data  
+        if(response){
+            const data = await response.data
+            return data 
+        } 
     } catch (error) {
-        console.error(`An unexpected error:${'requestStreams'}`)
+        throw(`An unexpected error(requestStreams):${error}`)
     }
 }
 
@@ -70,7 +89,7 @@ function checkStreamFromResponse(data, userIdToCheck) {
          }
          return undefined
     } catch (error) {
-        console.error(`An unexpected error(checkStreamFromResponse):${error}`)
+        throw(`An unexpected error(checkStreamFromResponse):${error}`)
     }
 }
 
