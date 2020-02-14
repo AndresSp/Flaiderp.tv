@@ -4,14 +4,15 @@ chrome.alarms.create('checkStreamsStatus', { delayInMinutes: 1, periodInMinutes:
 
 chrome.runtime.onInstalled.addListener(async function(){
     const data = await requestStreams([144360146, 171295429, 44445592])
-    if(data){
-        const streamData = checkStreamFromResponse(data, 144360146) //flaiveth
-        if(streamData){
-            chrome.browserAction.setBadgeText({text: 'ON'});
-            showToast();
-        } else {
-            chrome.browserAction.setBadgeText({text: ''});
-        }
+    if(!data){
+        return
+    }
+    const streamData = checkStreamFromResponse(data, 144360146) //flaiveth
+    if(streamData){
+        chrome.browserAction.setBadgeText({text: 'ON'});
+        showToast();
+    } else {
+        chrome.browserAction.setBadgeText({text: ''});
     }
 })
 
@@ -20,25 +21,27 @@ let counter = 1
 chrome.alarms.onAlarm.addListener(async function() {
     console.log('alarm', counter++)
     const data = await requestStreams([144360146, 171295429, 44445592])
-    if(data){
-        const streamData = checkStreamFromResponse(data, 144360146) //flaiveth
-        if(streamData){
-            chrome.browserAction.setBadgeText({text: 'ON'});
-            showToast();
-        } else {
-            chrome.browserAction.setBadgeText({text: ''});
-        }
+    if(!data){
+        return
+    }
+    const streamData = checkStreamFromResponse(data, 144360146) //flaiveth
+    if(streamData){
+        chrome.browserAction.setBadgeText({text: 'ON'});
+        showToast();
+    } else {
+        chrome.browserAction.setBadgeText({text: ''});
     }
   }
   );
 
 chrome.history.onVisited.addListener(function(historyResult) {
     if(historyResult){
-        console.log(historyResult)
-        if(historyResult.url.includes('twitch.tv') && historyResult.url.includes('flaiveth')){
-            console.log('flai',historyResult) 
-        }     
+        return
     }
+
+    if(historyResult.url.includes('twitch.tv') && historyResult.url.includes('flaiveth')){
+        console.log('flai',historyResult) 
+    }     
 })
 
 async function twitchAPIRequest(userIds) {
@@ -69,10 +72,11 @@ async function twitchAPIRequest(userIds) {
 async function requestStreams(userIds) {
     try {
         const response = await twitchAPIRequest(userIds)
-        if(response){
-            const data = await response.data
-            return data 
+        if(!response){
+            return
         } 
+        const data = await response.data
+        return data 
     } catch (error) {
         throw(`An unexpected error(requestStreams):${error}`)
     }
@@ -82,12 +86,13 @@ function checkStreamFromResponse(data, userIdToCheck) {
     try {
         if(data.length > 0){
             const streamData = data.find((stream) => stream.user_id == userIdToCheck)
-            if(streamData){
-                const streamOn = streamData.viewer_count !== null
-                return streamOn ? streamData : undefined
+            if(!streamData){
+                return
             }
+            const streamOn = streamData.viewer_count !== null
+            return streamOn ? streamData : undefined
          }
-         return undefined
+         return 
     } catch (error) {
         throw(`An unexpected error(checkStreamFromResponse):${error}`)
     }
