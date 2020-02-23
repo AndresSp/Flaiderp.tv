@@ -1,6 +1,6 @@
 'use strict';
 
-const flaivethId = 144360146; //flaiveth UserId
+const flaivethId = 234187776 //144360146; //flaiveth UserId
 const flaivethIcon = 'streamers/flaiveth.jpg';//flaiveth Icon
 
 chrome.alarms.create('checkStreamsStatus', { delayInMinutes: 1, periodInMinutes: 1 });
@@ -32,13 +32,6 @@ chrome.alarms.onAlarm.addListener(async function(name) {
   }
   );
 
-chrome.history.onVisited.addListener(function(historyResult) {
-
-    if(historyResult.url.includes('twitch.tv') && historyResult.url.includes('sweet_anita')){
-        console.log('flai',historyResult) 
-    }     
-})
-
 async function notifyFlow(streamers) {
     const data = await requestStreams(streamers)
 
@@ -49,20 +42,9 @@ async function notifyFlow(streamers) {
     ).filter(streamOn => streamOn) //filter streams offlines
     
     console.log(streamInfo)
-// id: "36935324096"
-// user_id: "97124985"
-// user_name: "camilasaTV"
-// game_id: "509658"
-// type: "live"
-// title: "12 HORAS EN VIVO ♥ !12"
-// viewer_count: 68
-// started_at: "2020-02-15T21:00:08Z"
-// language: "es"
-// thumbnail_url: "https://static-cdn.jtvnw.net/previews-ttv/live_user_camilasatv-{width}x{height}.jpg"
-// tag_ids: ["d4bb9c58-2141-4881-bcdc-3fe0505457d1"]
 
     if(!streamInfo || !streamInfo.length){
-        chrome.browserAction.setBadgeText({text: ''})
+        setNotificationProperties(true, '')
         return
     }
 
@@ -70,14 +52,17 @@ async function notifyFlow(streamers) {
     
     if(flaivethStream){
         setNotificationProperties(true, 'ON')
-        await showToast(flaivethStream.user_name, flaivethStream.title, flaivethStream.started_at, 'streamers/flaiveth.jpg');
-        return
-    } 
 
+        await showToast(flaivethStream.user_name, flaivethStream.title, flaivethStream.started_at, 'streamers/flaiveth.jpg');
+
+        return 
+    }
+    
     streamInfo.map(async (stream) => {
         setNotificationProperties(true, `${streamInfo.length}`)
-        if(stream)
-        await showToast(stream.user_name, stream.title, stream.started_at,'streamers/flaiveth.jpg');
+        if(stream){
+            await showToast(stream.user_name, stream.title, stream.started_at,'streamers/flaiveth.jpg');
+        }
     })
 }
 
@@ -147,7 +132,32 @@ async function showToast(userName, streamTitle, started_at, icon) {
         title:    `${userName}`,
         message:  `${streamTitle}`,
         contextMessage: `Está en directo - ${getStreamingTime(started_at)}`,
-        priority: 0});
+        priority: 0
+    }, function(createdId) {
+        const handler = function(id) {
+          if(id == createdId) {
+            const userNameUrl = userName.toLowerCase()
+            chrome.tabs.query({url: `https://www.twitch.tv/${userNameUrl}`}, 
+            function (tabs) {
+                if(!tabs || !tabs.length){
+                    chrome.tabs.create({url: `https://www.twitch.tv/${userNameUrl}`})
+                    return
+                }
+
+                const tab = tabs[0]
+                chrome.tabs.highlight({
+                    windowId: tab.windowId,
+                    tabs: tab.index
+                })
+            })
+
+            chrome.notifications.clear(id);
+            chrome.notifications.onClicked.removeListener(handler);
+          }
+        };
+        chrome.notifications.onClicked.addListener(handler);
+        if(typeof createdCallback == "function") createdCallback();
+      });
 }
 
 function setNotificationProperties(enable, badgeText) {
@@ -157,9 +167,12 @@ function setNotificationProperties(enable, badgeText) {
         chrome.browserAction.disable() 
     }
 
-    console.log(chrome.browserAction.getBadgeText)
-    chrome.browserAction.setBadgeText({
-        text: badgeText
+    chrome.browserAction.getBadgeText({}, function (currentBadgeText) {
+        if(currentBadgeText !== badgeText){
+            chrome.browserAction.setBadgeText({
+                text: badgeText
+            })
+        }
     })
 }
 
