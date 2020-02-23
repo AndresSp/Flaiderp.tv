@@ -1,7 +1,8 @@
 'use strict';
 
-const flaivethId = 234187776 //144360146; //flaiveth UserId
-const flaivethIcon = 'streamers/flaiveth.jpg';//flaiveth Icon
+const flaivethId = 144360146; //flaiveth UserId
+
+let notificationQueue = []
 
 chrome.alarms.create('checkStreamsStatus', { delayInMinutes: 1, periodInMinutes: 1 });
 
@@ -17,18 +18,25 @@ chrome.runtime.onInstalled.addListener(async function(){
     await notifyFlow(streamers);
 })
 
+chrome.alarms.onAlarm.addListener(async function(alarm) {
+    console.log('alarm', alarm.name)
 
-let counter = 1
-chrome.alarms.onAlarm.addListener(async function(name) {
-    console.log('alarm', name, counter++)
+    switch (alarm.name) {
+        case 'checkStreamsStatus':
+            chrome.storage.sync.get('config',async function(configFile) {
+                const config = JSON.parse(configFile.config)
+                const otherStreamers = Object.values(config.streams);
+                
+                const streamers = [flaivethId].concat(otherStreamers);
+                await notifyFlow(streamers);
+                });
+            break;
 
-    chrome.storage.sync.get('config',async function(configFile) {
-        const config = JSON.parse(configFile.config)
-        const otherStreamers = Object.values(config.streams);
-        
-        const streamers = [flaivethId].concat(otherStreamers);
-        await notifyFlow(streamers);
-      });
+        case 'showNextNotification':
+            const nextOne = notificationQueue.shift()
+            await showToast(nextOne.user_name, nextOne.title, nextOne.started_at,`streamers/${nextOne.user_id}.jpg`)
+            break;
+    }
   }
   );
 
@@ -49,21 +57,19 @@ async function notifyFlow(streamers) {
     }
 
     const flaivethStream = streamInfo.find((stream) => stream.user_id == flaivethId)
+
+    streamInfo.map(async (stream, index) => {
+        if(stream){
+            notificationQueue.push(stream) //Add stream info in the queue
+            chrome.alarms.create('showNextNotification', { when: Date.now() + 90 * index });
+        }
+    })
     
     if(flaivethStream){
         setNotificationProperties(true, 'ON')
-
-        await showToast(flaivethStream.user_name, flaivethStream.title, flaivethStream.started_at, 'streamers/flaiveth.jpg');
-
-        return 
-    }
-    
-    streamInfo.map(async (stream) => {
+    } else {
         setNotificationProperties(true, `${streamInfo.length}`)
-        if(stream){
-            await showToast(stream.user_name, stream.title, stream.started_at,'streamers/flaiveth.jpg');
-        }
-    })
+    }
 }
 
 async function getConfig() {
