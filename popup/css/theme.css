@@ -1,0 +1,39 @@
+.bg-main {
+    background-color: #029402;
+}
+
+.bg-light-accent {
+    background-color: #4685F2 !important;
+}
+
+.bg-light-shades {
+    background-color: #F0ECEE;
+}
+
+.bg-dark-accent {
+    background-color: #557577;
+}
+
+.bg-dark-shades {
+    background-color: #1E2B4C;
+}
+
+.txt-light-theme {
+    color: #1E2B4C;
+}
+
+.txt-dark-theme {
+    color: #F0ECEE;
+}
+
+.txt-main {
+    color: #029402;
+}
+  
+.txt-light-accent {
+    color: #4685F2;
+}
+
+.txt-dark-accent {
+    color: #557577;
+}

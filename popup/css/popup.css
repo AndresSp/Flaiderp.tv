@@ -1,0 +1,82 @@
+body {
+  font-family: "Lato", Arial, sans-serif;
+  font-size: 13px;
+}
+
+#title-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#title {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+#socials {
+  align-self: flex-end;
+  padding: 5px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: start;
+  align-items: stretch;
+  width: 350px;
+  height: 550px;
+  padding: 10px;
+}
+
+#config {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: stretch;
+
+  flex: 1 1 100%
+}
+
+.streamer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+
+  flex: 1 1 auto;
+  padding: 10px 0;
+}
+
+.name {
+  font-weight: bold;
+}
+
+.switch {
+}
+
+.logo {
+  background: url(../assets/icons/144360146.png) no-repeat;
+  background-size: contain;
+  width: 32px;
+  height: 32px;
+  margin-right: 5px;
+}
+
+
+
+.icon-144360146 {
+  background: url(../assets/icons/144360146.png) no-repeat;
+  background-size: contain;
+  max-width: 16px !important;
+  height: 16px;
+  align-self: center;
+}

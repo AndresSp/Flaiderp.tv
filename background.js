@@ -5,12 +5,15 @@ const flaivethId = 144360146; //flaiveth UserId
 let notificationQueue = []
 
 chrome.alarms.create('checkStreamsStatus', { delayInMinutes: 1, periodInMinutes: 1 });
+chrome.alarms.create('showNextNotification', { delayInMinutes: 1, periodInMinutes: 1 });
 
 chrome.runtime.onInstalled.addListener(async function(){
 
     const configFile = await getConfig()
     const config = configFile.config;
-    const otherStreamers = Object.values(config.streams);
+    const otherStreamers = Object.values(config.streams)
+    .filter((configArray) => configArray[1])
+    .map((configArray) => configArray[0]);
 
     const streamers = [flaivethId].concat(otherStreamers);
 
@@ -25,7 +28,9 @@ chrome.alarms.onAlarm.addListener(async function(alarm) {
         case 'checkStreamsStatus':
             chrome.storage.sync.get('config',async function(configFile) {
                 const config = JSON.parse(configFile.config)
-                const otherStreamers = Object.values(config.streams);
+                const otherStreamers = Object.values(config.streams)
+                .filter((configArray) => configArray[1])
+                .map((configArray) => configArray[0]);
                 
                 const streamers = [flaivethId].concat(otherStreamers);
                 await notifyFlow(streamers);
@@ -33,8 +38,12 @@ chrome.alarms.onAlarm.addListener(async function(alarm) {
             break;
 
         case 'showNextNotification':
+            if(!notificationQueue.length){
+                return
+            }
+
             const nextOne = notificationQueue.shift()
-            await showToast(nextOne.user_name, nextOne.title, nextOne.started_at,`streamers/${nextOne.user_id}.jpg`)
+            await showToast(nextOne.user_name, nextOne.title, nextOne.started_at,`streamers/${nextOne.user_id}.png`)
             break;
     }
   }
@@ -58,10 +67,9 @@ async function notifyFlow(streamers) {
 
     const flaivethStream = streamInfo.find((stream) => stream.user_id == flaivethId)
 
-    streamInfo.map(async (stream, index) => {
+    streamInfo.map(async (stream) => {
         if(stream){
             notificationQueue.push(stream) //Add stream info in the queue
-            chrome.alarms.create('showNextNotification', { when: Date.now() + 90 * index });
         }
     })
     
@@ -228,14 +236,3 @@ const errorHandler = (error, functionName) => {
             default: throw(`An unexpected error(${functionName}):${error}`)
         }
 }
-
-//chrome.alarms.create(string name, object alarmInfo)
-// chrome.browserAction.onClicked.addListener(function(tab) {
-//   var opt = {
-//     type: "basic",
-//     title: "Primary Title",
-//     message: "Primary message to display",
-//     iconUrl: "streamers/adal.jpg"
-//   }
-//   chrome.notifications.create('1', opt, function() {});
-// });
