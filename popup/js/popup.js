@@ -1,70 +1,33 @@
 'use strict';
 
+chrome.runtime.sendMessage({ origin:'popUpOpened' });
+
 document.addEventListener('DOMContentLoaded', function() {
-    var elems = document.querySelectorAll('.collapsible');
-    var instances = M.Collapsible.init(elems, {});
+    const collapsibles = document.querySelectorAll('.collapsible');
+    const instCollapsibles = M.Collapsible.init(collapsibles, {});
+
+    var materialboxeds = document.querySelectorAll('.materialboxed');
+    var instMaterialBoxeds = M.Materialbox.init(materialboxeds, {});
+
   });
 
-chrome.storage.sync.get('config',async function(configFile) {
-    const config = JSON.parse(configFile.config)
-    createCollapsibleItems(config.streams)
-    //createSwitchs(config.streams)
-});
-
-function createCollapsibleItems(streams){
-    const streamsElem = document.getElementById('streams')
-
-    for (const key in streams) {
-        if (streams.hasOwnProperty(key)) {
-            const value = streams[key];
-
-            const li = document.createElement('li')
-            li.className = 'collection-item avatar'
-
-            const avatar = document.createElement('img')
-            avatar.src = '../assets/icons/144360146.png'
-
-            const title = document.createElement('span')
-            title.className = 'title'
-            title.textContent = key
-
-            const header = document.createElement('div')
-            header.className = 'collapsible-header'
-
-            const icon = document.createElement('i')
-            icon.className = 'icon-144360146'
-
-            const name = document.createElement('span')
-            name.className = 'flai-darkgreen'
-            name.textContent = key
-
-            const badge = document.createElement('span')
-            badge.className = 'new badge bg-light-accent pulse'
-            badge.setAttribute('data-badge-caption', 'LIVE')
-
-            const body = document.createElement('div')
-            body.className = 'collapsible-body'
-            body.innerText = '4'
-
-            const p = document.createElement('p')
-            p.innerText = 'Lorem ipsum dolor sit amet.'
-
-            body.appendChild(p)
-
-            header.appendChild(icon)
-            header.appendChild(name)
-            //const check = createSwitch(value[1])
-            header.appendChild(badge)
-            //header.appendChild(check)
-
-            li.appendChild(header)
-            li.appendChild(body)
-
-            streamsElem.appendChild(li)
-        }
+chrome.runtime.onMessage.addListener(function(resp,sender,sendResponse){
+    if(chrome.runtime.id !== sender.id || !resp){
+        return
     }
 
-}
+    if(!resp.hasOwnProperty('config') || !resp.hasOwnProperty('streamInfo')){
+        return
+    }
+
+    const streamers = resp.config.streams
+    const flaivethStream = resp.flaivethStream
+    const streamsLiveInfo = resp.streamInfo
+
+    manipulateDOM(flaivethStream, streamers, streamsLiveInfo)
+});
+
+
 
 function createSwitch(status) {
     const check = document.createElement('div')
@@ -87,3 +50,134 @@ function createSwitch(status) {
     return check
 }
 
+function getThumbnailURL(thumbnail_url, width, height) {
+    return thumbnail_url
+    .replace('{width}', `${width}`)
+    .replace('{height}', `${height}`)
+}
+
+
+function manipulateDOM(flaivethStream, streamers, streamsLiveInfo) {
+    if(flaivethStream){
+        const elmPreview = document.querySelector('#preview')
+        flaivethStreamPreview(elmPreview, flaivethStream)
+
+        const elmTitle = document.querySelector('.streamer-title')
+        elmTitle.setAttribute('status', 'LIVE')
+
+        const elmBadge = document.querySelector('#status')
+        elmBadge.setAttribute('data-badge-caption', 'LIVE')
+
+        const elmFlaiContent = document.querySelector('#flaiveth-card > .card-content')
+        flaivethStreamContent(elmFlaiContent, flaivethStream)
+    } else {
+        const elmTitle = document.querySelector('.streamer-title')
+        elmTitle.setAttribute('status', 'OFF')
+
+        const elmBadge = document.querySelector('#status')
+        elmBadge.setAttribute('data-badge-caption', 'OFF')
+
+        const elmFlaiContent = document.querySelector('#flaiveth-card > .card-content')
+        elmFlaiContent.parentNode.removeChild(elmFlaiContent)
+    }
+
+    const elmStreams = document.getElementById('streams');
+    createCollapsibleItems(elmStreams, streamers, streamsLiveInfo)
+
+    const collapsibleHeaders = document.querySelectorAll('.collapsible-header');
+    collapsibleHeaders.forEach(function(collapsible) {
+        collapsible.addEventListener('click',  function(event) {
+            if(collapsible.hasAttribute('disabled')){
+                event.stopPropagation()
+            }
+          })
+      });
+}
+
+function flaivethStreamPreview(elmFlai, stream) {
+    elmFlai.src = getThumbnailURL(stream.thumbnail_url, 698, 393)
+}
+
+function flaivethStreamContent(elmFlai, stream) {
+    const parragraph = document.createElement('p')
+    const text = document.createTextNode(stream.title)
+    parragraph.appendChild(text)
+    elmFlai.appendChild(parragraph)
+}
+
+function createCollapsibleItems(streamsElement, streamers, streamsLiveInfo){
+    for (const key in streamers) {
+        if (streamers.hasOwnProperty(key)) {
+            const value = streamers[key];
+
+            const li = document.createElement('li')
+
+            const header = document.createElement('div')
+            header.className = 'collapsible-header'
+
+            const avatar = document.createElement('img')
+            avatar.className = 'circle'
+            avatar.width = '25'
+            avatar.height = '25'
+            avatar.src = `../streamers/${value[0]}.png`
+
+            const name = document.createElement('span')
+            name.className = 'streamer-name flai-darkgreen'
+            name.textContent = key
+
+            const badge = document.createElement('span')
+            badge.className = 'new badge pulse'
+
+            const body = document.createElement('div')
+            body.className = 'collapsible-body'
+
+            const bodyContent = document.createElement('div')
+            bodyContent.className = 'content'
+
+            const preview = document.createElement('img')
+
+            const p = document.createElement('p')
+            p.className = 'truncate'
+
+            const streamOn = streamsLiveInfo
+            .find((streamLive) => streamLive.user_id == value[0])
+            
+            if(streamOn){
+                badge.setAttribute('data-badge-caption', 'LIVE')
+                const text = document.createTextNode(streamOn.title)
+                p.appendChild(text)
+
+                preview.width = '70'
+                preview.height = '40'
+                preview.src = getThumbnailURL(streamOn.thumbnail_url, 70, 40)
+            } else {
+                badge.setAttribute('data-badge-caption', 'OFF')
+
+                header.setAttribute('disabled', 'true')
+            }
+
+            bodyContent.appendChild(preview)
+            bodyContent.appendChild(p)
+
+            body.appendChild(bodyContent)
+
+            header.appendChild(avatar)
+            header.appendChild(name)
+            //const check = createSwitch(value[1])
+            header.appendChild(badge)
+            //header.appendChild(check)
+
+            li.appendChild(header)
+            li.appendChild(body)
+
+            streamsElement.appendChild(li)
+        }
+    }
+
+}
+
+function getThumbnailURL(thumbnail_url, width, height) {
+    return thumbnail_url
+    .replace('{width}', `${width}`)
+    .replace('{height}', `${height}`)
+}

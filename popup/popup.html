@@ -1,41 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Flaiderp.tv</title>
     <!--Import Google Icon Font-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
     <!--Import materialize.css-->
     <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/brands.css" integrity="sha384-+2AYGyI2bR10NExh4Lu/3NQmpNxck8EcRE7aATrMi9QQ9OAKQAQw1bcrlWkp0tdM" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/fontawesome.css" integrity="sha384-C1VkjHy10mh0wo7rz2xEDdqrfn5C+AJpaCpUyScFHzKb0mnAU3I//2RrdAE+LfQ6" crossorigin="anonymous">
+
     <link type="text/css" rel="stylesheet" href="css/popup.css" />
     <link type="text/css" rel="stylesheet" href="css/theme.css" />
+
+    <script defer rel="preload" type="text/javascript" src="js/materialize.min.js"></script>
+    <script defer rel="preload" type="text/javascript" src="js/popup.js"></script>
 </head>
-<body class="bg-light-shades txt-light-theme">
+<body>
+    <nav>
+        <div id="brand">
+            <a href="https://www.twitch.tv/flaiveth" rel="noopener noreferrer" target="_blank">
+                <i class="navbar-logo"></i>
+            </a>
+            <a style="color:inherit" rel="noopener noreferrer" href="https://www.twitch.tv/flaiveth" target="_blank">
+                <div style="color:inherit">Flaiderp.tv</div>
+            </a>
+        </div>
+        <div id="options">
+            <i class="material-icons" style="font-size: 20px;">brightness_3</i>
+            <i class="material-icons">more_vert</i>
+        </div>
+    </nav>
     <div class="container">
         <div id="title-container">
-            <div id="title">
-                <div class="logo"></div>
-                <h4>Flaiderp.tv</h4>
+            <div id="title" class="txt-main">
+                
             </div> 
-            <div id="socials" class="txt-dark-accent">
-                <a style="color:inherit" href="https://twitter.com/Flaiveth" target="_blank" rel="noopener noreferrer"><i class="fa fa-twitter fa-lg"></i></a>
-                <a style="color:inherit" href="https://www.instagram.com/flaiveth_cosplay/" target="_blank" rel="noopener noreferrer"><i class="fa fa-instagram fa-lg"></i></a>
-                <a style="color:inherit" href="https://www.facebook.com/FlaivethCosplay/" target="_blank" rel="noopener noreferrer"><i class="fa fa-facebook fa-lg"></i></a>
-                <a style="color:inherit" href="https://www.youtube.com/channel/UCZDhcdvZ7bwzAyPOZMrBf6w" target="_blank" rel="noopener noreferrer"><i class="fa fa-youtube fa-lg"></i></a>
-            </div>
         </div>
         <div id="streamers-container">
-            <span>Amigos</span>
-            <ul id="streams" class="collapsible">
+            <div id="flaiveth-card" class="card hoverable">
+                <div class="card-image">
+                    <img id="preview" class="materialboxed" src="../streamers/144360146.png">
+                    <span class="card-title streamer-title"> 
+                      <span style="text-shadow: 2px 2px 4px black;">Flaiveth</span>
+                      <span id="status" class="new badge flaiveth pulse" data-badge-caption="LIVE"></span>
+                    </span>
+                </div>
+                <div class="card-content" style="color:inherit">
+                </div>
+                <div class="card-action socials">
+                    <a style="color:inherit" href="https://www.facebook.com/FlaivethCosplay/" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a>
+                    
+                    <a style="color:inherit" href="https://twitter.com/Flaiveth" target="_blank" rel="noopener noreferrer"><i class="fab fa-twitter"></i></a>
+                    
+                    <a style="color:inherit" href="https://www.instagram.com/flaiveth_cosplay/" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                    
+                    <a style="color:inherit" href="https://www.youtube.com/channel/UCZDhcdvZ7bwzAyPOZMrBf6w" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i></a>
+                    
+                    <a style="color:inherit" href="https://www.patreon.com/flaiveth" target="_blank" rel="noopener noreferrer"><i class="fab fa-patreon"></i></a>
+                    
+                    <a style="color:inherit" href="https://www.twitch.tv/flaiveth" target="_blank" rel="noopener noreferrer"><i class="fab fa-twitch"></i></a>
+                    
+                    <a style="color:inherit" href="http://shoptly.com/flaiveth" target="_blank" rel="noopener noreferrer"><i class="fab fa-shopify"></i></a>
+                </div>
+            </div>
+            <h6>Amigos</h6>
+            <ul id="streams" class="collapsible hoverable">
             </ul>
         </div>
     </div>
-    <!--JavaScript at end of body for optimized loading-->
-    <script type="text/javascript" src="js/materialize.min.js"></script>
-    <script type="text/javascript" src="js/popup.js"></script>
 </body>
 </html>

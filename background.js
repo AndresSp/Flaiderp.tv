@@ -4,6 +4,11 @@ const flaivethId = 144360146; //flaiveth UserId
 
 let notificationQueue = []
 
+//popUp Conn
+let configUI;
+let streamInfoUI;
+let flaivethStreamUI;
+
 chrome.alarms.create('checkStreamsStatus', { delayInMinutes: 1, periodInMinutes: 1 });
 chrome.alarms.create('showNextNotification', { delayInMinutes: 1, periodInMinutes: 1 });
 
@@ -11,6 +16,9 @@ chrome.runtime.onInstalled.addListener(async function(){
 
     const configFile = await getConfig()
     const config = configFile.config;
+
+    configUI = config //Sended to PopUp
+
     const otherStreamers = Object.values(config.streams)
     .filter((configArray) => configArray[1])
     .map((configArray) => configArray[0]);
@@ -28,6 +36,9 @@ chrome.alarms.onAlarm.addListener(async function(alarm) {
         case 'checkStreamsStatus':
             chrome.storage.sync.get('config',async function(configFile) {
                 const config = JSON.parse(configFile.config)
+
+                configUI = config //Sended to PopUp
+
                 const otherStreamers = Object.values(config.streams)
                 .filter((configArray) => configArray[1])
                 .map((configArray) => configArray[0]);
@@ -46,8 +57,23 @@ chrome.alarms.onAlarm.addListener(async function(alarm) {
             await showToast(nextOne.user_name, nextOne.title, nextOne.started_at,`streamers/${nextOne.user_id}.png`)
             break;
     }
-  }
-  );
+  });
+
+chrome.runtime.onMessage.addListener(function(message,sender,sendResponse){
+    if(chrome.runtime.id !== sender.id){
+        return
+    }
+
+    switch (message.origin) {
+        case 'popUpOpened':
+            chrome.runtime.sendMessage({ 
+                config: configUI,
+                streamInfo: streamInfoUI,
+                flaivethStream: flaivethStreamUI
+            })
+            break;
+    }
+});
 
 async function notifyFlow(streamers) {
     const data = await requestStreams(streamers)
@@ -59,6 +85,7 @@ async function notifyFlow(streamers) {
     ).filter(streamOn => streamOn) //filter streams offlines
     
     console.log(streamInfo)
+    streamInfoUI = streamInfo
 
     if(!streamInfo || !streamInfo.length){
         setNotificationProperties(true, '')
@@ -66,6 +93,10 @@ async function notifyFlow(streamers) {
     }
 
     const flaivethStream = streamInfo.find((stream) => stream.user_id == flaivethId)
+    flaivethStreamUI = flaivethStream //Sended to PopUp
+
+    notificationQueue.filter((notification) => 
+    streamInfo.some(streamOn => streamOn === notification)) //Refresh NotificationQueue
 
     streamInfo.map(async (stream) => {
         if(stream){
@@ -236,3 +267,5 @@ const errorHandler = (error, functionName) => {
             default: throw(`An unexpected error(${functionName}):${error}`)
         }
 }
+
+

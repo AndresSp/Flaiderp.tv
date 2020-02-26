@@ -3,6 +3,31 @@ body {
   font-size: 13px;
 }
 
+nav {
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#brand {
+  line-height: 2;
+  font-size: 24px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: baseline;
+}
+
+#options {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
 #title-container {
   display: flex;
   flex-direction: row;
@@ -19,11 +44,6 @@ body {
   align-items: center;
 }
 
-#socials {
-  align-self: flex-end;
-  padding: 5px;
-}
-
 .container {
   display: flex;
   flex-direction: column;
@@ -31,8 +51,9 @@ body {
   justify-content: start;
   align-items: stretch;
   width: 350px;
-  height: 550px;
+  max-height: 550px;
   padding: 10px;
+  overflow: auto;
 }
 
 #config {
@@ -56,8 +77,9 @@ body {
   padding: 10px 0;
 }
 
-.name {
+.streamer-name {
   font-weight: bold;
+  margin-left: 5px;
 }
 
 .switch {
@@ -71,7 +93,14 @@ body {
   margin-right: 5px;
 }
 
-
+.navbar-logo {
+  background: url(../assets/icons/144360146.png) no-repeat;
+  background-size: contain;
+  width: 32px;
+  height: 32px;
+  margin-right: 5px;
+  
+}
 
 .icon-144360146 {
   background: url(../assets/icons/144360146.png) no-repeat;
@@ -79,4 +108,44 @@ body {
   max-width: 16px !important;
   height: 16px;
   align-self: center;
+}
+
+.streamer-title {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+.streamer-title[status='LIVE'] {
+  justify-content: flex-end;
+}
+
+.streamer-title[status='OFF'] {
+  justify-content: flex-start;
+}
+
+.socials {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+.collapsible-body{
+  padding: 0;
+}
+
+.collapsible-body > .content {
+  padding: 1rem;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.collapsible-body > .content > p {
+  margin-left: 10px;
 }

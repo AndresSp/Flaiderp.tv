@@ -37,3 +37,62 @@
 .txt-dark-accent {
     color: #557577;
 }
+
+:root { 
+    --light-shades: #F0ECEE; 
+    --light-accent: #4685F2;
+    --main: #029402;  
+    --dark-accent: #557577;
+    --dark-shades: #1E2B4C; 
+}
+
+html, body {  
+    background: var(--light-shades);  
+    color: var(--dark-shades);  
+}
+
+nav {
+    background-color: var(--dark-shades);
+    color: var(--light-shades);
+}
+
+
+.badge {
+    background-color: var(--light-accent) !important;
+    color: var(--light-shades) !important;
+}
+
+.badge.flaiveth[data-badge-caption='LIVE'] {
+    background-color: var(--main) !important;
+    color: var(--light-shades) !important;
+}
+
+.badge.flaiveth[data-badge-caption='OFF'] {
+    background-color: var(--dark-accent) !important;
+    color: var(--light-shades) !important;
+}
+
+.badge[data-badge-caption='LIVE'] {
+    background-color: var(--light-accent) !important;
+    color: var(--light-shades) !important;
+}
+
+.badge[data-badge-caption='OFF'] {
+    background-color: var(--dark-accent) !important;
+    color: var(--light-shades) !important;
+}
+
+
+.card-title {
+    color: var(--light-shades) !important;
+}
+
+.card-content {
+    background-color: var(--dark-shades) !important;
+    color: var(--light-shades) !important;
+}
+
+.card-action {
+    background-color: var(--main) !important;
+    color: var(--light-shades) !important;
+}
