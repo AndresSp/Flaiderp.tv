@@ -96,3 +96,19 @@ nav {
     background-color: var(--main) !important;
     color: var(--light-shades) !important;
 }
+
+.container {
+    position: relative;
+}
+
+#overlay {
+    background-color: var(--dark-shades); 
+    opacity: 0.95;     
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 5;
+    justify-content: center;
+  }

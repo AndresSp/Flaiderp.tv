@@ -2,6 +2,16 @@
 
 const flaivethId = 144360146; //flaiveth UserId
 
+let loading = true;
+
+// const interval = setInterval(function() {
+//     if(document.readyState === 'complete') {
+//         manipulateLoading(false)
+//         clearInterval(interval);
+//         done();
+//     }    
+// }, 100);
+
 chrome.storage.sync.get('config',async function(configFile) {
     const config = JSON.parse(configFile.config)
 
@@ -117,6 +127,17 @@ function getThumbnailURL(thumbnail_url, width, height) {
     .replace('{height}', `${height}`)
 }
 
+function manipulateLoading(enable){
+    const loading = document.querySelector('#overlay')
+    if(enable){
+        loading.classList.remove('d-none')
+        loading.classList.add('d-block')
+    } else {
+        loading.classList.remove('d-block')
+        loading.classList.add('d-none') 
+    }
+}
+
 function manipulateOtherStreams(streamers, streamsLiveInfo) {
     console.log(streamers, streamsLiveInfo)
     const elmStreams = document.getElementById('streams');
@@ -160,6 +181,8 @@ function manipulateFlaivethInfo(flaivethStream) {
 
         const elmFlaiContent = document.querySelector('#flaiveth-card > .card-content')
     }
+
+    manipulateLoading(false)
 }
 
 function flaivethStreamPreview(elmFlai, stream) {
@@ -206,17 +229,17 @@ function createCollapsibleItems(streamsElement, streamers, streamsLiveInfo){
             const preview = document.createElement('img')
 
             const p = document.createElement('p')
-            p.className = 'truncate'
 
             const streamOn = streamsLiveInfo
             .find((streamLive) => streamLive.user_id == value[0])
             
             if(streamOn){
                 badge.setAttribute('data-badge-caption', 'LIVE')
-                const text = document.createTextNode(streamOn.title)
+                const t = '!sr - LVL 1 Run! si me muero un shot!!! de awa !sr - LVL 1 Run! si me muero si me muero '
+                const text = document.createTextNode(truncateString(t, 76))
+                //const text = document.createTextNode(streamOn.title)
                 p.appendChild(text)
 
-                preview.className = 'materialboxed'
                 preview.width = '70'
                 preview.height = '40'
                 preview.src = getThumbnailURL(streamOn.thumbnail_url, 700, 400)
@@ -244,6 +267,15 @@ function createCollapsibleItems(streamsElement, streamers, streamsLiveInfo){
         }
     }
 
+}
+//115
+
+function truncateString(text, num) {
+    if(text.length <= num){
+        return text
+    }
+
+    return text.slice(0, num) + '...'
 }
 
 function getThumbnailURL(thumbnail_url, width, height) {
