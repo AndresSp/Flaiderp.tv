@@ -4,13 +4,12 @@ const flaivethId = 144360146; //flaiveth UserId
 
 let notificationQueue = []
 
-//popUp Conn
-let configUI;
-let streamInfoUI;
-let flaivethStreamUI;
-
 chrome.alarms.create('checkStreamsStatus', { delayInMinutes: 1, periodInMinutes: 1 });
 chrome.alarms.create('showNextNotification', { delayInMinutes: 1, periodInMinutes: 1 });
+
+chrome.storage.onChanged.addListener(function(changes, areaName) {
+    console.log(changes, areaName)
+})
 
 chrome.runtime.onInstalled.addListener(async function(){
 
@@ -59,22 +58,6 @@ chrome.alarms.onAlarm.addListener(async function(alarm) {
     }
   });
 
-chrome.runtime.onMessage.addListener(function(message,sender,sendResponse){
-    if(chrome.runtime.id !== sender.id){
-        return
-    }
-
-    switch (message.origin) {
-        case 'popUpOpened':
-            chrome.runtime.sendMessage({ 
-                config: configUI,
-                streamInfo: streamInfoUI,
-                flaivethStream: flaivethStreamUI
-            })
-            break;
-    }
-});
-
 async function notifyFlow(streamers) {
     const data = await requestStreams(streamers)
 
@@ -85,7 +68,6 @@ async function notifyFlow(streamers) {
     ).filter(streamOn => streamOn) //filter streams offlines
     
     console.log(streamInfo)
-    streamInfoUI = streamInfo
 
     if(!streamInfo || !streamInfo.length){
         setNotificationProperties(true, '')
@@ -93,13 +75,11 @@ async function notifyFlow(streamers) {
     }
 
     const flaivethStream = streamInfo.find((stream) => stream.user_id == flaivethId)
-    flaivethStreamUI = flaivethStream //Sended to PopUp
-
-    notificationQueue.filter((notification) => 
-    streamInfo.some(streamOn => streamOn === notification)) //Refresh NotificationQueue
 
     streamInfo.map(async (stream) => {
-        if(stream){
+        const notificationFound = notificationQueue.find((notifQ) => notifQ.user_id == stream.user_id)
+
+        if(stream && !notificationFound){
             notificationQueue.push(stream) //Add stream info in the queue
         }
     })

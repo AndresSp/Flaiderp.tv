@@ -1,33 +1,94 @@
 'use strict';
 
-chrome.runtime.sendMessage({ origin:'popUpOpened' });
+const flaivethId = 144360146; //flaiveth UserId
 
-document.addEventListener('DOMContentLoaded', function() {
-    const collapsibles = document.querySelectorAll('.collapsible');
-    const instCollapsibles = M.Collapsible.init(collapsibles, {});
+chrome.storage.sync.get('config',async function(configFile) {
+    const config = JSON.parse(configFile.config)
 
-    var materialboxeds = document.querySelectorAll('.materialboxed');
-    var instMaterialBoxeds = M.Materialbox.init(materialboxeds, {});
+    const otherStreamers = Object.values(config.streams)
+    .filter((configArray) => configArray[1])
+    .map((configArray) => configArray[0]);
+    
+    const streamers = [flaivethId].concat(otherStreamers);
+    const data = await requestStreams(streamers)
 
-  });
-
-chrome.runtime.onMessage.addListener(function(resp,sender,sendResponse){
-    if(chrome.runtime.id !== sender.id || !resp){
+    if(!data){
         return
     }
 
-    if(!resp.hasOwnProperty('config') || !resp.hasOwnProperty('streamInfo')){
-        return
-    }
+    const streamInfo = streamers.map((streamer) => checkStreamFromResponse(data, streamer)
+    ).filter(streamOn => streamOn) //filter streams offlines
 
-    const streamers = resp.config.streams
-    const flaivethStream = resp.flaivethStream
-    const streamsLiveInfo = resp.streamInfo
+    const flaivethStream = streamInfo.find((stream) => stream.user_id == flaivethId)
 
-    manipulateDOM(flaivethStream, streamers, streamsLiveInfo)
+    manipulateFlaivethInfo(flaivethStream)
+    manipulateOtherStreams(config.streams, streamInfo)
 });
 
+// const streamers = resp.config.streams
+// const flaivethStream = resp.flaivethStream
+// const streamsLiveInfo = resp.streamInfo
 
+//manipulateDOM(flaivethStream, streamers, streamsLiveInfo)
+
+async function requestStreams(userIds) {
+    try {
+        const response = await twitchAPIRequest(userIds)
+        if(!response){
+            return
+        } 
+        const data = await response.data
+        return data 
+    } catch (error) {
+        errorHandler(error, requestStreams.name)
+    }
+}
+
+async function twitchAPIRequest(userIds) {
+    const url = new URL('https://api.twitch.tv/helix/streams');
+    try {
+        userIds.map((userId) => url.searchParams.append('user_id', userId))
+        const response = await fetch(url, {
+       headers: {
+        'Content-Type': 'application/json',
+        'Client-ID': '17v1noul6hr06tipzfaggsspuevmxt'
+        }
+    })
+        return await response.json()
+    } catch (error) {
+        errorHandler(error, twitchAPIRequest.name)
+    }
+}
+
+function checkStreamFromResponse(data, userIdToCheck) {
+    try {
+        if(data.length > 0){
+            const streamData = data.find((stream) => stream.user_id == userIdToCheck)
+            if(!streamData){
+                return
+            }
+            const streamOn = streamData.viewer_count !== null
+            return streamOn ? streamData : undefined
+         }
+         return 
+    } catch (error) {
+        errorHandler(error, checkStreamFromResponse.name)
+    }
+}
+
+const errorHandler = (error, functionName) => {
+    if(!error.message){
+        throw(`An unexpected error(${functionName}):${error}`)
+    }
+        switch (error.message) {
+            case 'Failed to fetch':
+                console.debug('Internet Disconnected')
+            break;
+            default: throw(`An unexpected error(${functionName}):${error}`)
+        }
+}
+
+//==========DOM=========//
 
 function createSwitch(status) {
     const check = document.createElement('div')
@@ -56,31 +117,8 @@ function getThumbnailURL(thumbnail_url, width, height) {
     .replace('{height}', `${height}`)
 }
 
-
-function manipulateDOM(flaivethStream, streamers, streamsLiveInfo) {
-    if(flaivethStream){
-        const elmPreview = document.querySelector('#preview')
-        flaivethStreamPreview(elmPreview, flaivethStream)
-
-        const elmTitle = document.querySelector('.streamer-title')
-        elmTitle.setAttribute('status', 'LIVE')
-
-        const elmBadge = document.querySelector('#status')
-        elmBadge.setAttribute('data-badge-caption', 'LIVE')
-
-        const elmFlaiContent = document.querySelector('#flaiveth-card > .card-content')
-        flaivethStreamContent(elmFlaiContent, flaivethStream)
-    } else {
-        const elmTitle = document.querySelector('.streamer-title')
-        elmTitle.setAttribute('status', 'OFF')
-
-        const elmBadge = document.querySelector('#status')
-        elmBadge.setAttribute('data-badge-caption', 'OFF')
-
-        const elmFlaiContent = document.querySelector('#flaiveth-card > .card-content')
-        elmFlaiContent.parentNode.removeChild(elmFlaiContent)
-    }
-
+function manipulateOtherStreams(streamers, streamsLiveInfo) {
+    console.log(streamers, streamsLiveInfo)
     const elmStreams = document.getElementById('streams');
     createCollapsibleItems(elmStreams, streamers, streamsLiveInfo)
 
@@ -94,11 +132,42 @@ function manipulateDOM(flaivethStream, streamers, streamsLiveInfo) {
       });
 }
 
+
+function manipulateFlaivethInfo(flaivethStream) {
+    if(flaivethStream){
+        const elmPreview = document.querySelector('#preview')
+        flaivethStreamPreview(elmPreview, flaivethStream)
+
+        const elmTitle = document.querySelector('.streamer-title')
+        elmTitle.setAttribute('status', 'LIVE')
+
+        const elmBadge = document.querySelector('#status')
+        elmBadge.className = 'new badge flaiveth pulse'
+        elmBadge.setAttribute('data-badge-caption', 'LIVE')
+
+        const elmFlaiContent = document.querySelector('#flaiveth-card > .card-content')
+        
+        flaivethStreamContent(elmFlaiContent, flaivethStream)
+    } else {
+        //const elmPreview = document.querySelector('#preview')
+
+        const elmTitle = document.querySelector('.streamer-title')
+        elmTitle.setAttribute('status', 'OFF')
+
+        const elmBadge = document.querySelector('#status')
+        elmBadge.className = 'new badge flaiveth pulse'
+        elmBadge.setAttribute('data-badge-caption', 'OFF')
+
+        const elmFlaiContent = document.querySelector('#flaiveth-card > .card-content')
+    }
+}
+
 function flaivethStreamPreview(elmFlai, stream) {
     elmFlai.src = getThumbnailURL(stream.thumbnail_url, 698, 393)
 }
 
 function flaivethStreamContent(elmFlai, stream) {
+    elmFlai.classList.remove('d-none');
     const parragraph = document.createElement('p')
     const text = document.createTextNode(stream.title)
     parragraph.appendChild(text)
@@ -147,9 +216,10 @@ function createCollapsibleItems(streamsElement, streamers, streamsLiveInfo){
                 const text = document.createTextNode(streamOn.title)
                 p.appendChild(text)
 
+                preview.className = 'materialboxed'
                 preview.width = '70'
                 preview.height = '40'
-                preview.src = getThumbnailURL(streamOn.thumbnail_url, 70, 40)
+                preview.src = getThumbnailURL(streamOn.thumbnail_url, 700, 400)
             } else {
                 badge.setAttribute('data-badge-caption', 'OFF')
 

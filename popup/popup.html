@@ -13,11 +13,12 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/brands.css" integrity="sha384-+2AYGyI2bR10NExh4Lu/3NQmpNxck8EcRE7aATrMi9QQ9OAKQAQw1bcrlWkp0tdM" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/fontawesome.css" integrity="sha384-C1VkjHy10mh0wo7rz2xEDdqrfn5C+AJpaCpUyScFHzKb0mnAU3I//2RrdAE+LfQ6" crossorigin="anonymous">
 
-    <link type="text/css" rel="stylesheet" href="css/popup.css" />
+    <link async type="text/css" rel="stylesheet" href="css/popup.css" />
     <link type="text/css" rel="stylesheet" href="css/theme.css" />
 
-    <script defer rel="preload" type="text/javascript" src="js/materialize.min.js"></script>
-    <script defer rel="preload" type="text/javascript" src="js/popup.js"></script>
+    <script defer type="text/javascript" src="js/materialize.min.js"></script>
+    <script defer type="text/javascript" src="js/init.js"></script>
+    <script async type="text/javascript" src="js/popup.js"></script>
 </head>
 <body>
     <nav>
@@ -44,12 +45,12 @@
             <div id="flaiveth-card" class="card hoverable">
                 <div class="card-image">
                     <img id="preview" class="materialboxed" src="../streamers/144360146.png">
-                    <span class="card-title streamer-title"> 
+                    <span id="caption" class="card-title streamer-title"> 
                       <span style="text-shadow: 2px 2px 4px black;">Flaiveth</span>
-                      <span id="status" class="new badge flaiveth pulse" data-badge-caption="LIVE"></span>
+                      <span id="status" class=""></span>
                     </span>
                 </div>
-                <div class="card-content" style="color:inherit">
+                <div class="card-content d-none" style="color:inherit">
                 </div>
                 <div class="card-action socials">
                     <a style="color:inherit" href="https://www.facebook.com/FlaivethCosplay/" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a>

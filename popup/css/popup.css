@@ -149,3 +149,11 @@ nav {
 .collapsible-body > .content > p {
   margin-left: 10px;
 }
+
+.d-block {
+  display: block;
+}
+
+.d-none {
+  display: none;
+}
