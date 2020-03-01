@@ -3,9 +3,9 @@
 const flaivethId = 144360146; //flaiveth UserId
 
 let notificationQueue = []
-let notificationsFlags = []
+let notificationActivated = []
 
-chrome.alarms.create('checkStreamsStatus', { delayInMinutes: 1, periodInMinutes: 1 });
+chrome.alarms.create('checkStreamsStatus', { delayInMinutes: 1, periodInMinutes: 5 });
 chrome.alarms.create('showNextNotification', { delayInMinutes: 1, periodInMinutes: 1 });
 
 chrome.storage.onChanged.addListener(function(changes, areaName) {
@@ -50,7 +50,7 @@ chrome.alarms.onAlarm.addListener(async function(alarm) {
             }
 
             const nextOne = notificationQueue.shift()
-            await showToast(nextOne.user_name, nextOne.title, nextOne.started_at,`streamers/${nextOne.user_id}.png`)
+            await showToast(nextOne.user_name, nextOne.title, nextOne.started_at, nextOne.user_id)
             break;
     }
   });
@@ -71,12 +71,22 @@ async function notifyFlow(streamers) {
         return
     }
 
+    resetActivatedStreams(notificationActivated, streamInfo); //Ractive notifications turned off to show next stream
+
     const flaivethStream = streamInfo.find((stream) => stream.user_id == flaivethId)
 
     streamInfo.map(async (stream) => {
-        const notificationFound = notificationQueue.find((notifQ) => notifQ.user_id == stream.user_id)
+        const notificationFound = notificationQueue.find((notifQ) => notifQ.user_id == stream.user_id) //check if notification is in the queue already
 
-        if(stream && !notificationFound){
+        const activatedAlready = notificationActivated.find((notifA) => notifA == stream.user_id) //check if user activated stream already
+
+        console.log('notificationActivated', notificationActivated)
+
+        const streamOpenedAlready = await queryStreamTab(stream.user_name)
+
+        console.log('streamOpenedAlready', streamOpenedAlready)
+
+        if(stream && !notificationFound && !activatedAlready && !streamOpenedAlready){
             notificationQueue.push(stream) //Add stream info in the queue
         }
     })
@@ -86,6 +96,18 @@ async function notifyFlow(streamers) {
     } else {
         setNotificationProperties(true, `${streamInfo.length}`)
     }
+}
+
+function resetActivatedStreams(notificationsActivated, streamsOn) {
+    notificationsActivated.map((notifA) => {
+        const streamOn = streamsOn.find((streamOn) => streamOn.user_id == notifA)
+        console.log('reset', streamOn, notificationActivated)
+
+        if(!streamOn){
+            const index = notificationActivated.findIndex((notifA) => currentNotifA === notifA)
+            notificationActivated.splice(index, 1)
+        }
+    })
 }
 
 async function getConfig() {
@@ -147,7 +169,9 @@ function checkStreamFromResponse(data, userIdToCheck) {
     }
 }
 
-async function showToast(userName, streamTitle, started_at, icon) {
+async function showToast(userName, streamTitle, started_at, user_id) {
+    const icon = `streamers/${user_id}.png`;
+
     chrome.notifications.create({
         type:     'basic',
         iconUrl:  icon,
@@ -159,6 +183,8 @@ async function showToast(userName, streamTitle, started_at, icon) {
         const handler = function(id) {
           if(id == createdId) {
             openStream(userName)
+            notificationActivated.push(user_id);
+
             chrome.notifications.clear(id);
             chrome.notifications.onClicked.removeListener(handler);
           }
@@ -199,6 +225,22 @@ function openStream(userName) {
             tabs: tab.index
         })
     })
+}
+
+async function queryStreamTab(userName){
+    const userNameUrl = userName.toLowerCase()
+    
+    const tabs = await new Promise(function (resolve, reject) {
+        chrome.tabs.query({url: `https://www.twitch.tv/${userNameUrl}`}, 
+            function (tabs) {
+                resolve(tabs)
+        })
+    })
+
+    if(!tabs || !tabs.length){
+        return false
+    }
+    return true
 }
 
 function getStreamingTime(started_at){
