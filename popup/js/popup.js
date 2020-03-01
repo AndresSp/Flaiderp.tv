@@ -2,15 +2,7 @@
 
 const flaivethId = 144360146; //flaiveth UserId
 
-let loading = true;
-
-// const interval = setInterval(function() {
-//     if(document.readyState === 'complete') {
-//         manipulateLoading(false)
-//         clearInterval(interval);
-//         done();
-//     }    
-// }, 100);
+dropdownListeners()
 
 chrome.storage.sync.get('config',async function(configFile) {
     const config = JSON.parse(configFile.config)
@@ -34,12 +26,6 @@ chrome.storage.sync.get('config',async function(configFile) {
     manipulateFlaivethInfo(flaivethStream)
     manipulateOtherStreams(config.streams, streamInfo)
 });
-
-// const streamers = resp.config.streams
-// const flaivethStream = resp.flaivethStream
-// const streamsLiveInfo = resp.streamInfo
-
-//manipulateDOM(flaivethStream, streamers, streamsLiveInfo)
 
 async function requestStreams(userIds) {
     try {
@@ -128,7 +114,7 @@ function getThumbnailURL(thumbnail_url, width, height) {
 }
 
 function manipulateLoading(enable){
-    const loading = document.querySelector('#overlay')
+    const loading = document.querySelector('#loading-overlay')
     if(enable){
         loading.classList.remove('d-none')
         loading.classList.add('d-block')
@@ -152,7 +138,6 @@ function manipulateOtherStreams(streamers, streamsLiveInfo) {
           })
       });
 }
-
 
 function manipulateFlaivethInfo(flaivethStream) {
     if(flaivethStream){
@@ -214,7 +199,7 @@ function createCollapsibleItems(streamsElement, streamers, streamsLiveInfo){
             avatar.src = `../streamers/${value[0]}.png`
 
             const name = document.createElement('span')
-            name.className = 'streamer-name flai-darkgreen'
+            name.className = 'streamer-name'
             name.textContent = key
 
             const badge = document.createElement('span')
@@ -227,22 +212,30 @@ function createCollapsibleItems(streamsElement, streamers, streamsLiveInfo){
             bodyContent.className = 'content'
 
             const preview = document.createElement('img')
-
             const p = document.createElement('p')
+            const urlIcon = document.createElement('i')
 
             const streamOn = streamsLiveInfo
             .find((streamLive) => streamLive.user_id == value[0])
             
             if(streamOn){
                 badge.setAttribute('data-badge-caption', 'LIVE')
-                const t = '!sr - LVL 1 Run! si me muero un shot!!! de awa !sr - LVL 1 Run! si me muero si me muero '
-                const text = document.createTextNode(truncateString(t, 76))
-                //const text = document.createTextNode(streamOn.title)
+                const text = document.createTextNode(truncateString(streamOn.title, 50))
                 p.appendChild(text)
 
+                //preview.className = 'materialboxed'
                 preview.width = '70'
                 preview.height = '40'
                 preview.src = getThumbnailURL(streamOn.thumbnail_url, 700, 400)
+
+                urlIcon.className = 'material-icons url-icon clickable'
+                urlIcon.textContent = 'open_in_new'
+
+                urlIcon.addEventListener('click', function () {
+                    openStream(streamOn.user_name)
+                })
+
+                header.classList.add('clickable')
             } else {
                 badge.setAttribute('data-badge-caption', 'OFF')
 
@@ -251,6 +244,7 @@ function createCollapsibleItems(streamsElement, streamers, streamsLiveInfo){
 
             bodyContent.appendChild(preview)
             bodyContent.appendChild(p)
+            bodyContent.appendChild(urlIcon)
 
             body.appendChild(bodyContent)
 
@@ -268,7 +262,6 @@ function createCollapsibleItems(streamsElement, streamers, streamsLiveInfo){
     }
 
 }
-//115
 
 function truncateString(text, num) {
     if(text.length <= num){
@@ -282,4 +275,42 @@ function getThumbnailURL(thumbnail_url, width, height) {
     return thumbnail_url
     .replace('{width}', `${width}`)
     .replace('{height}', `${height}`)
+}
+
+function openStream(userName) {
+    const userNameUrl = userName.toLowerCase()
+    chrome.tabs.query({url: `https://www.twitch.tv/${userNameUrl}`}, 
+    function (tabs) {
+        if(!tabs || !tabs.length){
+            chrome.tabs.create({url: `https://www.twitch.tv/${userNameUrl}`})
+            return
+        }
+
+        const tab = tabs[0]
+        chrome.tabs.highlight({
+            windowId: tab.windowId,
+            tabs: tab.index
+        })
+    })
+}
+
+function dropdownListeners() {
+    const reloadEl = document.querySelector('#dropdown-reload')
+    const aboutEl = document.querySelector('#dropdown-about')
+
+    reloadEl.addEventListener('click', function () {
+        chrome.runtime.reload();
+    })
+
+    aboutEl.addEventListener('click', function () {
+        const manifest = chrome.runtime.getManifest()
+        const name =  manifest.name
+        const version = manifest.version
+        const author = manifest.author
+        alert(`
+        Name: ${name}
+        Version: ${version}
+        Author: ${author}
+        `)
+    })
 }

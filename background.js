@@ -3,6 +3,7 @@
 const flaivethId = 144360146; //flaiveth UserId
 
 let notificationQueue = []
+let notificationsFlags = []
 
 chrome.alarms.create('checkStreamsStatus', { delayInMinutes: 1, periodInMinutes: 1 });
 chrome.alarms.create('showNextNotification', { delayInMinutes: 1, periodInMinutes: 1 });
@@ -15,8 +16,6 @@ chrome.runtime.onInstalled.addListener(async function(){
 
     const configFile = await getConfig()
     const config = configFile.config;
-
-    configUI = config //Sended to PopUp
 
     const otherStreamers = Object.values(config.streams)
     .filter((configArray) => configArray[1])
@@ -35,8 +34,6 @@ chrome.alarms.onAlarm.addListener(async function(alarm) {
         case 'checkStreamsStatus':
             chrome.storage.sync.get('config',async function(configFile) {
                 const config = JSON.parse(configFile.config)
-
-                configUI = config //Sended to PopUp
 
                 const otherStreamers = Object.values(config.streams)
                 .filter((configArray) => configArray[1])
@@ -161,21 +158,7 @@ async function showToast(userName, streamTitle, started_at, icon) {
     }, function(createdId) {
         const handler = function(id) {
           if(id == createdId) {
-            const userNameUrl = userName.toLowerCase()
-            chrome.tabs.query({url: `https://www.twitch.tv/${userNameUrl}`}, 
-            function (tabs) {
-                if(!tabs || !tabs.length){
-                    chrome.tabs.create({url: `https://www.twitch.tv/${userNameUrl}`})
-                    return
-                }
-
-                const tab = tabs[0]
-                chrome.tabs.highlight({
-                    windowId: tab.windowId,
-                    tabs: tab.index
-                })
-            })
-
+            openStream(userName)
             chrome.notifications.clear(id);
             chrome.notifications.onClicked.removeListener(handler);
           }
@@ -198,6 +181,23 @@ function setNotificationProperties(enable, badgeText) {
                 text: badgeText
             })
         }
+    })
+}
+
+function openStream(userName) {
+    const userNameUrl = userName.toLowerCase()
+    chrome.tabs.query({url: `https://www.twitch.tv/${userNameUrl}`}, 
+    function (tabs) {
+        if(!tabs || !tabs.length){
+            chrome.tabs.create({url: `https://www.twitch.tv/${userNameUrl}`})
+            return
+        }
+
+        const tab = tabs[0]
+        chrome.tabs.highlight({
+            windowId: tab.windowId,
+            tabs: tab.index
+        })
     })
 }
 

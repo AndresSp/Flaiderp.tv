@@ -12,4 +12,7 @@ function materializeInit() {
     
     const materialboxeds = document.querySelectorAll('.materialboxed');
     const instMaterialBoxeds = M.Materialbox.init(materialboxeds, {});
+
+    const dropdowns = document.querySelectorAll('.dropdown-trigger');
+    const instDropdowns = M.Dropdown.init(dropdowns, options);
 }

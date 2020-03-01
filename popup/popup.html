@@ -31,12 +31,17 @@
             </a>
         </div>
         <div id="options">
-            <i class="material-icons" style="font-size: 20px;">brightness_3</i>
-            <i class="material-icons">more_vert</i>
+            <!-- <i class="material-icons" style="font-size: 20px;">brightness_3</i> -->
+            <i class="material-icons dropdown-trigger clickable" data-target="options-dropdown">more_vert</i>
+            <ul id='options-dropdown' class='dropdown-content'>
+                <li style="color: inherit;" class="clickable"><a id="dropdown-reload" style="color: inherit;">Recargar</a></li>
+                <li class="divider" tabindex="-1"></li>
+                <li style="color: inherit;" class="clickable"><a id="dropdown-about" style="color: inherit;"><i class="material-icons">info</i>Info</a></li>
+            </ul>
         </div>
     </nav>
         <div class="container">
-            <div id="overlay" class="valign-wrapper">
+            <div id="loading-overlay" class="valign-wrapper">
                 <div class="preloader-wrapper big active">
                     <div class="spinner-layer spinner-green-only">
                       <div class="circle-clipper left">
@@ -58,10 +63,10 @@
                 <div id="streamers-container">
                     <div id="flaiveth-card" class="card hoverable">
                         <div class="card-image">
-                            <img id="preview" class="materialboxed" src="../streamers/144360146.png">
+                            <img id="preview" src="../streamers/144360146.png">
                             <span id="caption" class="card-title streamer-title"> 
                               <span style="text-shadow: 2px 2px 4px black;">Flaiveth</span>
-                              <span id="status" class=""></span>
+                              <span id="status"></span>
                             </span>
                         </div>
                         <div class="card-content d-none" style="color:inherit">

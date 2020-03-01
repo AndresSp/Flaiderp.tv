@@ -56,6 +56,11 @@ nav {
     color: var(--light-shades);
 }
 
+#options-dropdown {
+    background-color: var(--dark-shades);
+    color: var(--light-shades) !important;
+}
+
 
 .badge {
     background-color: var(--light-accent) !important;
@@ -101,7 +106,17 @@ nav {
     position: relative;
 }
 
-#overlay {
+.collapsible-header {
+    /*background-color: var(--dark-shades);*/
+    color: var(--dark-shades);
+    /* border-color: var(--dark-shades); */
+}
+
+.collapsible-body > .content > .url-icon {
+    color: var(--main);
+}
+
+#loading-overlay {
     background-color: var(--dark-shades); 
     opacity: 0.95;     
     position: absolute;

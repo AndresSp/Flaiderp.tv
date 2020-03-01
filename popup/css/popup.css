@@ -12,6 +12,14 @@ nav {
   align-items: center;
 }
 
+.dropdown-content li > a {
+  font-size: 14px;
+}
+
+.dropdown-content li > a > i {
+  margin: 0 5px 0 0;
+}
+
 #brand {
   line-height: 2;
   font-size: 24px;
@@ -133,6 +141,11 @@ nav {
   justify-content: space-between;
   align-items: center;
 }
+
+.collapsible-header {
+  cursor: default;
+}
+
 .collapsible-body{
   padding: 0;
 }
@@ -156,4 +169,8 @@ nav {
 
 .d-none {
   display: none;
+}
+
+.clickable {
+  cursor: pointer;
 }
