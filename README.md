@@ -24,4 +24,4 @@ Please make sure to update tests as appropriate. (TODO)
 [AndresSp](https://github.com/AndresSp)
 
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
+[MIT](https://github.com/AndresSp/Flaiderp.tv/blob/master/LICENSE)
