@@ -1,0 +1,33 @@
+:root { 
+    --light-shades: #F0ECEE; 
+    --light-accent: #4685F2;
+    --main: #029402;  
+    --dark-accent: #557577;
+    --dark-shades: #1E2B4C; 
+}
+
+body {
+    background-color: var(--light-shades);
+    font-size: 16px;
+}
+
+#main-sidenav li > a {
+    color: var(--light-shades)
+}
+
+#main-sidenav {
+    background-color: var(--dark-shades);
+    color: var(--light-shades);
+}
+
+#main-sidenav li.active {
+    background-color: rgba(2, 148, 2, 0.5);
+}
+
+#main-sidenav > li:not(:first-child):hover {
+    background-color: var(--dark-accent);
+}
+
+/* #main-sidenav > li {
+    background-color: var(--dark-shades);
+} */

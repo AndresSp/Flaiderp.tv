@@ -295,8 +295,17 @@ function openStream(userName) {
 }
 
 function dropdownListeners() {
+    const optionsEl = document.querySelector('#dropdown-options')
     const reloadEl = document.querySelector('#dropdown-reload')
     const aboutEl = document.querySelector('#dropdown-about')
+
+    optionsEl.addEventListener('click', function () {
+        if (chrome.runtime.openOptionsPage) {
+            chrome.runtime.openOptionsPage();
+          } else {
+            window.open(chrome.runtime.getURL('../../options/options.html'));
+          }
+    })
 
     reloadEl.addEventListener('click', function () {
         chrome.runtime.reload();

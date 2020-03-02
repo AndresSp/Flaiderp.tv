@@ -5,7 +5,7 @@ const flaivethId = 144360146; //flaiveth UserId
 let notificationQueue = []
 let notificationActivated = []
 
-chrome.alarms.create('checkStreamsStatus', { delayInMinutes: 1, periodInMinutes: 5 });
+chrome.alarms.create('checkStreamsStatus', { delayInMinutes: 1, periodInMinutes: 1 });
 chrome.alarms.create('showNextNotification', { delayInMinutes: 1, periodInMinutes: 1 });
 
 chrome.storage.onChanged.addListener(function(changes, areaName) {

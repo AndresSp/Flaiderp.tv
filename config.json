@@ -1,5 +1,10 @@
 {
     "config": {
+        "enable": true,
+        "intervals": {
+            "check": 5,
+            "notifications": 1
+        },
         "streams": 
         {
             "Sunny": [52326616, true], 

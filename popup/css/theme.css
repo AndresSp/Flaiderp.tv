@@ -61,6 +61,10 @@ nav {
     color: var(--light-shades) !important;
 }
 
+.dropdown-content li:hover {
+    background-color: rgba(2, 148, 2, 0.5);
+}
+
 
 .badge {
     background-color: var(--light-accent) !important;
