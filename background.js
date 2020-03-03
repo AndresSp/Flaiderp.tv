@@ -116,7 +116,7 @@ function resetActivatedStreams(notificationsActivated, streamsOn) {
         console.log('reset', streamOn, notificationActivated)
 
         if(!streamOn){
-            const index = notificationActivated.findIndex((notifA) => currentNotifA === notifA)
+            const index = notificationActivated.findIndex((currentNotifA) => currentNotifA === notifA)
             notificationActivated.splice(index, 1)
         }
     })
