@@ -18,17 +18,86 @@
     <script async type="text/javascript" src="js/options.js"></script>
 </head>
 <body>
+    <!-- SideNav -->
     <ul id="main-sidenav" class="sidenav sidenav-fixed">
         <li class="brand">
             <img class="circle" src="../icon/128.png">
-            <div id="title"><b>Flaiderp.tv Ajustes</b></div>
+            <div id="sidenav-title"><b>Flaiderp.tv Ajustes</b></div>
         </li>
         <li class="active">
-            <a href="#!" style="color:inherit" class="waves-effect waves-green">General</a></li>
-        <li><a href="./html/about.html" style="color:inherit" class="waves-effect waves-green">Información</a></li>
+            <a href="#!" style="color:inherit" class="waves-effect waves-green">General</a>
+        </li>
+        <!-- <li>
+            <a href="#!" style="color:inherit" class="waves-effect waves-green">Notificaciones</a>
+        </li> -->
+        <!-- <li><a href="./html/about.html" style="color:inherit" class="waves-effect waves-green">Información</a></li> -->
     </ul>
     <a href="#" data-target="main-sidenav" class="sidenav-trigger">
         <i class="material-icons">menu</i>
     </a>
+    <!-- /SideNav -->
+
+    <main>
+        <div class="container">
+
+            <div class="card w-100" style=" padding: 20px;">
+                <div id="title">Ajustes Generales</div>
+
+                <ul class="collection" style="padding-top: 0;">
+                    <li class="collection-item">
+                        <span>Activado</span> 
+                        <div class="switch">
+                            <label>
+                            No
+                            <input id="enable-switch" type="checkbox" checked>
+                            <span class="lever"></span>
+                            Sí
+                            </label>
+                        </div>
+                    </li>
+                </ul>
+
+                <!-- <h5>Ajustes de Frecuencia</h5>
+
+                <ul class="collection" style="padding-top: 0;">
+                    <li class="collection-item">
+                        <span>Frecuencia de Consulta</span> 
+                        <div class="input-field m-0">
+                            <select class="browser-default">
+                                <option value="" disabled selected>Seleccionar</option>
+                                <option value="1">cada minuto</option>
+                                <option value="3">cada 3 minutos</option>
+                                <option value="5">cada 5 minutos</option>
+                                <option value="10">cada 10 minutos</option>
+                                <option value="15">cada 15 minutos</option>
+                            </select>
+                        </div>
+                    </li>
+                    <li class="collection-item">
+                        <span>Frecuencia de Notificaciones</span> 
+                        <div class="switch">
+                            <label>
+                            Activado
+                            <input type="checkbox">
+                            <span class="lever"></span>
+                            Desactivado
+                            </label>
+                        </div>
+                    </li>
+                </ul>
+
+                <h5>Ajustes de Notificaciones</h5>
+
+                <ul class="collection" style="padding-top: 0;">
+                    <li class="collection-item">Streamer 1</li>
+                    <li class="collection-item">Streamer 2</li>
+                </ul> -->
+                <!-- <h4></h4> -->
+            </div>
+            <!-- Title -->
+            <!-- /Title -->
+            
+        </div>
+    </main>
 </body>
 </html>

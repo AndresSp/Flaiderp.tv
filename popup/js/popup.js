@@ -23,6 +23,8 @@ chrome.storage.sync.get('config',async function(configFile) {
 
     const flaivethStream = streamInfo.find((stream) => stream.user_id == flaivethId)
 
+    assignEnableSwitch(config.enable)
+    enableSwitchListener(config)
     manipulateFlaivethInfo(flaivethStream)
     manipulateOtherStreams(config.streams, streamInfo)
 });
@@ -85,6 +87,16 @@ const errorHandler = (error, functionName) => {
 }
 
 //==========DOM=========//
+
+function assignEnableSwitch(enable) {
+    const enableSwitch = document.querySelector('#enable-switch')
+
+    if(enable){
+        enableSwitch.setAttribute('checked','')
+    } else {
+        enableSwitch.removeAttribute('checked')
+    }
+}
 
 function createSwitch(status) {
     const check = document.createElement('div')
@@ -294,6 +306,8 @@ function openStream(userName) {
     })
 }
 
+//===== Configuration =====//
+
 function dropdownListeners() {
     const optionsEl = document.querySelector('#dropdown-options')
     const reloadEl = document.querySelector('#dropdown-reload')
@@ -322,4 +336,18 @@ function dropdownListeners() {
         Author: ${author}
         `)
     })
+}
+
+function enableSwitchListener(configSaved) {
+    const enableSwitch = document.querySelector('#enable-switch')
+
+    enableSwitch.addEventListener('change', function () {
+        const value = this.checked
+        const config = Object.assign(configSaved, { enable: value })
+        save(config)
+    })
+}
+
+function save(config) {
+    chrome.storage.sync.set({config : JSON.stringify(config)})
 }

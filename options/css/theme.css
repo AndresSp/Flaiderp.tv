@@ -1,6 +1,7 @@
 :root { 
     --light-shades: #F0ECEE; 
     --light-accent: #4685F2;
+    --lightest-accent: rgb(119, 162, 235);
     --main: #029402;  
     --dark-accent: #557577;
     --dark-shades: #1E2B4C; 
@@ -10,6 +11,10 @@ body {
     background-color: var(--light-shades);
     font-size: 16px;
 }
+
+main {
+    color: var(--dark-shades);
+  }
 
 #main-sidenav li > a {
     color: var(--light-shades)
@@ -26,6 +31,13 @@ body {
 
 #main-sidenav > li:not(:first-child):hover {
     background-color: var(--dark-accent);
+}
+
+.switch label input[type=checkbox]:checked+.lever:after {
+    background-color: var(--light-accent) !important;
+}
+.switch label input[type=checkbox]:checked+.lever {
+    background-color: var(--lightest-accent) !important;
 }
 
 /* #main-sidenav > li {

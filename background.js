@@ -4,6 +4,7 @@ const flaivethId = 144360146; //flaiveth UserId
 
 let notificationQueue = []
 let notificationActivated = []
+let configSaved = undefined
 
 chrome.alarms.create('checkStreamsStatus', { delayInMinutes: 1, periodInMinutes: 1 });
 chrome.alarms.create('showNextNotification', { delayInMinutes: 1, periodInMinutes: 1 });
@@ -16,6 +17,7 @@ chrome.runtime.onInstalled.addListener(async function(){
 
     const configFile = await getConfig()
     const config = configFile.config;
+    configSaved = config //Save config in memory
 
     const otherStreamers = Object.values(config.streams)
     .filter((configArray) => configArray[1])
@@ -25,6 +27,10 @@ chrome.runtime.onInstalled.addListener(async function(){
 
     chrome.storage.sync.set({config : JSON.stringify(config)})
     await notifyFlow(streamers);
+})
+
+chrome.storage.onChanged.addListener(function(changes, areaName) {
+    configSaved = JSON.parse(changes.config.newValue)
 })
 
 chrome.alarms.onAlarm.addListener(async function(alarm) {
@@ -46,6 +52,12 @@ chrome.alarms.onAlarm.addListener(async function(alarm) {
 
         case 'showNextNotification':
             if(!notificationQueue.length){
+                return
+            }
+
+            if(!configSaved.enable){
+                notificationQueue = []
+                console.log('notification skipped')
                 return
             }
 

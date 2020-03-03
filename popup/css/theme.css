@@ -56,6 +56,13 @@ nav {
     color: var(--light-shades);
 }
 
+.switch label input[type=checkbox]:checked+.lever:after {
+    background-color: #029402 !important;
+}
+.switch label input[type=checkbox]:checked+.lever {
+    background-color: #4e8d4e !important;
+}
+
 #options-dropdown {
     background-color: var(--dark-shades);
     color: var(--light-shades) !important;
