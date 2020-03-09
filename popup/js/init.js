@@ -1,3 +1,6 @@
+import '../css/popup.css';
+import '../css/theme.css';
+
 'use strict';
 
 if (document.readyState === 'loading') {
