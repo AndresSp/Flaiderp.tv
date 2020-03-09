@@ -10,10 +10,11 @@ git clone https://github.com/AndresSp/Flaiderp.tv.git
 More Tools > Extensions > Enable Developer Mode > Load unpacked (Load root project's directory)
 
 ## Roadmap
-1. Initial Release **(Alpha Testing)**
-2. Customizable **(Alpha Testing)**
-3. Backend authorization **(Alpha Testing)**
-4. Testing **(Beta Testing)**
+1. ~~Initial Release **(Alpha Testing)**~~
+2. ~~Customizable **(Alpha Testing)**~~
+3. ~~Optimization **(Alpha Testing)**~~
+4. Backend authorization **(Alpha Testing)**
+5. Testing **(Beta Testing)**
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
