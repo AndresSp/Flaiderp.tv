@@ -55,6 +55,7 @@ chrome.alarms.onAlarm.addListener(async function(alarm) {
                 return
             }
 
+            console.log(configSaved)
             if(!configSaved.enable){
                 notificationQueue = []
                 console.log('notification skipped')

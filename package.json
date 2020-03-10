@@ -5,8 +5,8 @@
   "main": "background.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
-    "build:prod": "webpack -p"
+    "build": "webpack --mode=none",
+    "build:prod": "webpack --mode=production"
   },
   "repository": {
     "type": "git",
