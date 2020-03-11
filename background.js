@@ -40,6 +40,7 @@ chrome.alarms.onAlarm.addListener(async function(alarm) {
         case 'checkStreamsStatus':
             chrome.storage.sync.get('config',async function(configFile) {
                 const config = JSON.parse(configFile.config)
+                configSaved = config
 
                 const otherStreamers = Object.values(config.streams)
                 .filter((configArray) => configArray[1])
